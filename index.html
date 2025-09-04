@@ -1,0 +1,258 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gordon Hinchen - Digital Business Card</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #4a3728; /* Fallback for natural brown wood */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            background-size: cover;
+            filter: sepia(0.3) hue-rotate(-20deg) saturate(1.2); /* Adjust to natural brown */
+            z-index: -1;
+        }
+        .card {
+            background: linear-gradient(135deg, #2a4d7e, #1e2a44);
+            position: relative;
+            color: #ffffff;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 20%, transparent 70%);
+            transform: rotate(45deg);
+            z-index: 1;
+            opacity: 0.4;
+        }
+        .card > * {
+            position: relative;
+            z-index: 2;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6);
+        }
+        .card img.profile-pic {
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border: 3px solid #d1d5db;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+            float: left;
+            margin-right: 1rem;
+            position: relative;
+            z-index: 3; /* Ensure profile pic is above all layers */
+        }
+        .card img.profile-pic:hover {
+            transform: scale(1.1);
+        }
+        .card .logo-container {
+            position: absolute;
+            top: 2.5rem;
+            right: 2.5rem;
+            z-index: 2;
+        }
+        .card .logo-container div {
+            background-color: #ffffff;
+            border-radius: 50%;
+            padding: 0.5rem;
+            display: inline-block;
+        }
+        .card .logo-container img {
+            width: 120px;
+            height: auto;
+            border-radius: 50%;
+            display: block;
+        }
+        .card h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            clear: both;
+        }
+        .card p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #d1d5db;
+            line-height: 1.5;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        .social-links {
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+        .social-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            white-space: nowrap;
+        }
+        .social-links a:hover {
+            color: #d1d5db;
+            text-decoration: underline;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .contact-button, .pre-approve-button, .vcard-button {
+            background-color: #2a4d7e;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .contact-button:hover, .pre-approve-button:hover, .vcard-button:hover {
+            background-color: #1e2a44;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem;
+                max-width: 90%;
+            }
+            .card img.profile-pic {
+                width: 120px;
+                height: 120px;
+                float: none;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .card .logo-container {
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+            .card .logo-container img {
+                width: 100px;
+            }
+            .card h1 {
+                font-size: 1.5rem;
+            }
+            .card p {
+                font-size: 1rem;
+            }
+            .social-links a {
+                font-size: 1rem;
+                margin: 0 0.5rem;
+            }
+            .contact-button, .pre-approve-button, .vcard-button {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+            .button-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="https://i.ibb.co/MkYp911z/hinchen-headshot-square.jpg" alt="Gordon Hinchen Profile Picture" class="profile-pic">
+        <div class="logo-container">
+            <div><img src="https://i.ibb.co/sJ374N7x/Final-Logo.png" alt="DRG Mortgage Logo"></div>
+        </div>
+        <h1>Gordon Hinchen</h1>
+        <p>Mortgage Loan Originator, DRG Mortgage</p>
+        <p>gordon@drgmortgage.com | (440) 975-6216</p>
+        <p>Cleveland, OH | Serving All of Ohio</p>
+        <div class="social-links">
+            <a href="https://www.linkedin.com/in/gordon-hinchen-58b434202/" target="_blank">LinkedIn</a>
+            <a href="https://www.facebook.com/profile.php?id=61580352268749" target="_blank">Facebook</a>
+            <a href="https://gordon8385.wixsite.com/drg-mortgage" target="_blank">Company Website</a>
+        </div>
+        <div class="button-container">
+            <a href="mailto:gordon@drgmortgage.com" class="contact-button">Contact Me</a>
+            <a href="https://gordon8385.wixsite.com/drg-mortgage" class="pre-approve-button">Get Pre-Approved</a>
+            <a href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AFN:Gordon%20Hinchen%0AN:Hinchen;Gordon;;;%0ATITLE:Mortgage%20Loan%20Originator%0AORG:DRG%20Mortgage%0AEMAIL;TYPE=WORK:gordon@drgmortgage.com%0ATEL;TYPE=WORK,CELL:(440)%20975-6216%0AADR;TYPE=WORK:;;Cleveland;OH;;USA%0AURL:https://gordon8385.wixsite.com/drg-mortgage%0AEND:VCARD" download="Gordon_Hinchen.vcf" class="vcard-button">Download vCard</a>
+        </div>
+    </div>
+</body>
+</html>
