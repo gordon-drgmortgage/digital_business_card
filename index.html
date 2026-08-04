@@ -117,13 +117,16 @@
       position: relative;
       align-self: stretch;
       min-height: 355px;
+      overflow: hidden;
     }
 
     .portrait {
       position: absolute;
-      inset: 20px -12px 0 -8px;
-      width: calc(100% + 20px);
-      height: calc(100% - 20px);
+      left: 50%;
+      bottom: -4px;
+      width: auto;
+      height: calc(100% - 4px);
+      transform: translateX(-50%);
       object-fit: contain;
       object-position: center bottom;
       filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.28));
@@ -138,12 +141,9 @@
 
     .brand-lockup {
       align-self: flex-start;
-      width: 184px;
-      max-height: 76px;
-      object-fit: contain;
-      object-position: left center;
+      width: 146px;
+      height: auto;
       margin-bottom: 24px;
-      padding: 10px 13px;
       background: rgba(255, 255, 255, 0.96);
       border: 2px solid var(--gold);
       border-radius: 15px;
@@ -349,9 +349,9 @@
       .card { width: 100%; border: 0; border-radius: 0; }
       .hero { grid-template-columns: 0.88fr 1.12fr; min-height: 330px; }
       .portrait-wrap { min-height: 330px; }
-      .portrait { inset: 36px -26px 0 -38px; width: calc(100% + 64px); height: calc(100% - 36px); }
+      .portrait { bottom: -2px; height: calc(100% - 2px); }
       .identity { padding: 44px 18px 36px 6px; }
-      .brand-lockup { width: 142px; margin-bottom: 21px; }
+      .brand-lockup { width: 124px; margin-bottom: 21px; }
       h1 { font-size: clamp(2.25rem, 11.4vw, 3.5rem); }
       .role { font-size: 0.82rem; }
       .license-line { font-size: 0.78rem; }
@@ -366,7 +366,7 @@
       .hero { grid-template-columns: 0.92fr 1.08fr; min-height: 310px; }
       .portrait-wrap { min-height: 310px; }
       .identity { padding-right: 12px; }
-      .brand-lockup { width: 128px; }
+      .brand-lockup { width: 112px; }
       .actions { grid-template-columns: repeat(2, 1fr); }
     }
 
@@ -381,7 +381,7 @@
     <article class="card" aria-labelledby="gordon-name">
       <header class="hero">
         <div class="portrait-wrap" aria-hidden="true">
-          <img class="portrait" src="assets/gordon-hinchen-approved-portrait.png" alt="">
+          <img class="portrait" src="assets/gordon-hinchen-card-portrait-v2.png" alt="">
         </div>
         <div class="identity">
           <img class="brand-lockup" src="assets/drg-logo.png" alt="DRG Mortgage, LLC">
