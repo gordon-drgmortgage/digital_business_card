@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "render-sharing-preview": "node render-sharing-preview.cjs"
+  },
+  "dependencies": {
+    "sharp": "0.35.5"
+  }
+}
