@@ -373,6 +373,32 @@
       .actions { grid-template-columns: repeat(2, 1fr); }
     }
 
+    /* Portrait phones need the decorative rings and full-length portrait to stay
+       inside the visual column, rather than overlapping the identity lockup. */
+    @media (max-width: 650px) and (orientation: portrait) {
+      .hero::before {
+        width: 220px;
+        height: 220px;
+        left: -104px;
+        top: -48px;
+      }
+
+      .hero::after {
+        width: 188px;
+        height: 188px;
+        left: -90px;
+        top: -32px;
+        border-width: 6px;
+      }
+
+      .portrait {
+        left: -25%;
+        top: 9%;
+        height: 82%;
+        transform: none;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
     }
